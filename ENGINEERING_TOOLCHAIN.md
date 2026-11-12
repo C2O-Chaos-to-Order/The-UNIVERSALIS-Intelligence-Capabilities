@@ -84,3 +84,5 @@ Treat every third-party name in that register as a proposed candidate/reference 
 ## Intelligence Capabilities implementation
 
 See INTELLIGENCE_CAPABILITIES_ARCHITECTURE.md for the complete owner-supplied tool inventory and the boundary-specific build posture. Shared contract definitions are in schemas/intelligence-capabilities/intelligence-capability-contracts.v1.schema.json; profile-specific synthetic fixtures and semantic checks are in examples/intelligence_capabilities/contracts.v1.json and .github/scripts/intelligence_capability_contract.py. Third-party products remain candidates pending verification.
+
+Intelligence Capabilities contract CI passed. The exact run IDs, negative cases, and outstanding cryptographic, benchmark, and product-integration work are recorded in INTELLIGENCE_CAPABILITIES_VALIDATION.md.
