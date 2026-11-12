@@ -11,7 +11,7 @@
 | Intelligence Capabilities Contract | Passed | [Run 43241755277](https://github.com/C2O-Chaos-to-Order/The-UNIVERSALIS-Intelligence-Capabilities/actions/runs/43241755277) |
 | Repository quality baseline | Passed | [Run 43241754989](https://github.com/C2O-Chaos-to-Order/The-UNIVERSALIS-Intelligence-Capabilities/actions/runs/43241754989) |
 
-The contract workflow completed Python runtime setup, seven shared contract-family checks, eight negative cases, the UNIVERSALIS local-first boundary profile, and the repository-quality baseline. Every step passed.
+The contract workflow completed Python runtime setup, seven shared contract-family checks, eight negative cases on the initial validator revision, the UNIVERSALIS local-first boundary profile, and the repository-quality baseline. Every step passed.
 
 ## Contract families exercised
 
@@ -24,7 +24,7 @@ The contract workflow completed Python runtime setup, seven shared contract-fami
 7. Bounded skill/harness improvement with strict held-out score gate and reviewer.
 8. Sovereignty-boundary declaration.
 
-## Negative tests
+## Negative tests in the initial CI-tested revision (8 cases)
 
 1. Plan DAG cycle.
 2. Compute-budget overspend.
@@ -41,6 +41,10 @@ The contract workflow completed Python runtime setup, seven shared contract-fami
 - The synthetic fixture passes the UNIVERSALIS profile.
 - Eight intended negative cases are rejected.
 - The repository-quality baseline validates the schema/fixture/configuration JSON syntax.
+
+## Additional hardening in the current branch revision (10 cases)
+
+The current validator source adds two further C2O-specific negative checks: a Plan DAG node without an explicit tool-scope reference is rejected under the C2O profile, and an approved C2O skill/harness change without a human-held permit reference is rejected. The compute-budget validator also now rejects negative allocations/remaining amounts and duplicate step allocations. These changes are present in the current implementation branch, but a new GitHub Actions run for this exact strengthened revision has not yet been surfaced. The passing run IDs above apply to the earlier eight-case revision only.
 
 ## Limits and unresolved work
 
