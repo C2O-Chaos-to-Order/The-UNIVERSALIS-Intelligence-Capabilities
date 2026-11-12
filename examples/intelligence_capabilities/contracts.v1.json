@@ -117,7 +117,7 @@
           "plan valid"
         ],
         "verification_ref": "verify:plan",
-        "tool_scope_ref": null
+        "tool_scope_ref": "scope:planning"
       },
       {
         "node_id": "execute",
@@ -267,7 +267,8 @@
     },
     "review": {
       "status": "approved",
-      "reviewer_ref": "reviewer:independent"
+      "reviewer_ref": "reviewer:independent",
+      "permit_ref": null
     },
     "release_ref": "release:fixture",
     "model_weights_changed": false
