@@ -38,11 +38,13 @@ def validate_profile(p):
         if not math.isclose(expected,p["overall"]["score"],rel_tol=1e-9,abs_tol=1e-9): raise ValueError("overall score does not match arithmetic mean")
     validate_attestation(p["attestation"])
 def validate_plan(p,profile):
-    timestamp(p["created_at"],"plan.created_at"); nodes=p["nodes"]; ids=[n["node_id"] for n in nodes]
+    timestamp(p["created_at"],"plan.created_at")
+    nodes=p["nodes"]; ids=[n["node_id"] for n in nodes]
     if len(ids)!=len(set(ids)): raise ValueError("duplicate plan node IDs")
     known=set(ids); degree={x:0 for x in ids}; children={x:[] for x in ids}
     for node in nodes:
-        if not node.get("verification_ref"): raise ValueError("every plan node requires verification reference")\n        if profile=="c2o" and not node.get("tool_scope_ref"): raise ValueError("C2O Plan DAG node requires an explicit tool-scope reference")
+        if not node.get("verification_ref"): raise ValueError("every plan node requires verification reference")
+        if profile=="c2o" and not node.get("tool_scope_ref"): raise ValueError("C2O Plan DAG node requires explicit tool-scope reference")
         for dep in node["depends_on"]:
             if dep not in known: raise ValueError("plan dependency references unknown node")
             if dep==node["node_id"]: raise ValueError("plan node cannot depend on itself")
@@ -54,6 +56,7 @@ def validate_plan(p,profile):
             degree[child]-=1
             if degree[child]==0: queue.append(child)
     if visited!=len(nodes): raise ValueError("plan dependencies contain a cycle")
+
 def validate_self_model(s):
     timestamp(s["observed_at"],"self_model.observed_at")
     if not s["limitations"]: raise ValueError("self-model must disclose evidence-backed limitations")
@@ -62,21 +65,31 @@ def validate_self_model(s):
         if not 0<=c["estimated_level"]<=1: raise ValueError("capability calibration out of range")
         timestamp(c["last_assessed_at"],"self_model.last_assessed_at")
     for x in s["process_health"]["signals"]: timestamp(x["observed_at"],"self_model.signal.observed_at")
+
 def walk_handles(value):
     if isinstance(value,dict):
         if FORBIDDEN_WORLD_MODEL_FIELDS.intersection(k.lower() for k in value): raise ValueError("world-model exchange must use opaque handles, not raw media/latent payloads")
         for v in value.values(): walk_handles(v)
     elif isinstance(value,list):
         for v in value: walk_handles(v)
+
 def validate_world(req,res):
     if req["request_id"]!=res["request_id"]: raise ValueError("world-model request/response IDs do not match")
     if not req["privacy"]["raw_media_stays_local"] or not req["privacy"]["latents_stay_local"]: raise ValueError("raw media and latents must stay local to world-model service")
     if not req["handles"]: raise ValueError("world-model request requires opaque handles")
+    handles=[h["handle_id"] for h in req["handles"]]
+    if len(handles)!=len(set(handles)): raise ValueError("world-model request contains duplicate handles")
     walk_handles(req); walk_handles(res)
+
 def validate_budget(b):
-    timestamp(b["issued_at"],"compute_budget.issued_at"); total=b["total_budget"]["limit"]; allocated=sum(x["amount"] for x in b["allocations"])
+    timestamp(b["issued_at"],"compute_budget.issued_at")
+    total=b["total_budget"]["limit"]; allocations=b["allocations"]; allocated=sum(x["amount"] for x in allocations)
+    if any(x["amount"]<0 for x in allocations) or b["remaining"]<0: raise ValueError("compute budget amounts cannot be negative")
+    steps=[x["step_id"] for x in allocations]
+    if len(steps)!=len(set(steps)): raise ValueError("compute budget has duplicate step allocations")
     if allocated+b["remaining"]>total+1e-9: raise ValueError("compute allocations exceed granted budget")
     if not math.isclose(allocated+b["remaining"],total,rel_tol=1e-9,abs_tol=1e-9): raise ValueError("allocations plus remaining must reconcile to grant")
+
 def validate_improvement(p,profile):
     if p["baseline_sha256"]==p["candidate_sha256"]: raise ValueError("candidate must change artifact hash")
     if p["model_weights_changed"] is not False: raise ValueError("contract does not authorize model-weight changes")
@@ -84,7 +97,9 @@ def validate_improvement(p,profile):
     if p["loop_stage"] in {"probe","compose"}:
         improved=g["candidate_score"]>g["baseline_score"] if g["objective"]=="maximize" else g["candidate_score"]<g["baseline_score"]
         if g["strict_improvement"]!=improved or g["passed"]!=improved: raise ValueError("held-out gate passes only on strict improvement")
-    if p["review"]["status"]=="approved" and (not g["passed"] or not p["review"].get("reviewer_ref")): raise ValueError("approved proposal requires passed held-out gate and reviewer")\n    if profile=="c2o" and p["review"]["status"]=="approved" and not p["review"].get("permit_ref"): raise ValueError("C2O approved skill/harness change requires a human-held permit reference")
+    if p["review"]["status"]=="approved" and (not g["passed"] or not p["review"].get("reviewer_ref")): raise ValueError("approved proposal requires passed held-out gate and reviewer")
+    if profile=="c2o" and p["review"]["status"]=="approved" and not p["review"].get("permit_ref"): raise ValueError("C2O approved skill/harness change requires human-held permit reference")
+
 def validate_boundary(b,profile):
     if profile=="c2o":
         if b["owner"]!="c2o" or b["deployment_mode"] not in {"private_sovereign","air_gapped"}: raise ValueError("C2O requires private sovereign or air-gapped boundary")
@@ -93,15 +108,20 @@ def validate_boundary(b,profile):
     else:
         if b["owner"]!="universalis": raise ValueError("UNIVERSALIS profile requires independently owned boundary")
         if b.get("policy_ref"): raise ValueError("UNIVERSALIS fixture cannot contain C2O-private policy reference")
+
 def validate_all(f,profile):
-    validate_profile(f["capability_profile"]); validate_plan(f["plan_dag"],profile); validate_self_model(f["self_model_state"])
-    validate_world(f["world_model_request"],f["world_model_response"]); validate_budget(f["compute_budget"])
-    validate_improvement(f["self_improvement_proposal"]); validate_boundary(f["sovereignty_boundary"],profile)
+    validate_profile(f["capability_profile"])
+    validate_plan(f["plan_dag"],profile)
+    validate_self_model(f["self_model_state"])
+    validate_world(f["world_model_request"],f["world_model_response"])
+    validate_budget(f["compute_budget"])
+    validate_improvement(f["self_improvement_proposal"],profile)
+    validate_boundary(f["sovereignty_boundary"],profile)
 def load(root): return json.loads((root/FIXTURE).read_text(encoding="utf-8"))
 def self_test(root):
     f=load(root)
-    profile = f["sovereignty_boundary"]["owner"]
-    validate_all(f, profile)
+    profile=f["sovereignty_boundary"]["owner"]
+    validate_all(f,profile)
     tests=[]
     bad=copy.deepcopy(f["plan_dag"]); bad["nodes"][0]["depends_on"]=["execute"]; tests.append((lambda:validate_plan(bad,profile),"plan DAG cycle"))
     bad=copy.deepcopy(f["compute_budget"]); bad["allocations"][0]["amount"]=9000; tests.append((lambda:validate_budget(bad),"compute budget overspend"))
@@ -110,7 +130,9 @@ def self_test(root):
     bad=copy.deepcopy(f["self_improvement_proposal"]); bad["model_weights_changed"]=True; tests.append((lambda:validate_improvement(bad,profile),"model weight change"))
     bad=copy.deepcopy(f["capability_profile"]); bad["axes"][0]["score"]=120; tests.append((lambda:validate_profile(bad),"capability score outside scale"))
     bad=copy.deepcopy(f["capability_profile"]); a=bad["attestation"]; a["verification_status"]="verified"; a["verified_by"]=a["signer_ref"]; a["verified_at"]="2026-11-12T10:22:00Z"; tests.append((lambda:validate_profile(bad),"self-verified attestation"))
-    bad=copy.deepcopy(f["sovereignty_boundary"]); bad.update({"owner":"c2o","deployment_mode":"private_sovereign","policy_ref":"policy:synthetic"}); bad["egress_default"]="allow"; tests.append((lambda:validate_boundary(bad,"c2o"),"C2O egress default allow"))\n    bad=copy.deepcopy(f["plan_dag"]); bad["nodes"][0]["tool_scope_ref"]=None; tests.append((lambda:validate_plan(bad,"c2o"),"C2O missing tool scope"))\n    bad=copy.deepcopy(f["self_improvement_proposal"]); bad["review"]["permit_ref"]=None; tests.append((lambda:validate_improvement(bad,"c2o"),"C2O missing human permit"))
+    bad=copy.deepcopy(f["sovereignty_boundary"]); bad.update({"owner":"c2o","deployment_mode":"private_sovereign","policy_ref":"policy:synthetic"}); bad["egress_default"]="allow"; tests.append((lambda:validate_boundary(bad,"c2o"),"C2O egress default allow"))
+    bad=copy.deepcopy(f["plan_dag"]); bad["nodes"][0]["tool_scope_ref"]=None; tests.append((lambda:validate_plan(bad,"c2o"),"C2O missing tool scope"))
+    bad=copy.deepcopy(f["self_improvement_proposal"]); bad["review"]["permit_ref"]=None; tests.append((lambda:validate_improvement(bad,"c2o"),"C2O missing human permit"))
     for op,label in tests:
         try: op()
         except (ValueError,KeyError,TypeError): continue
