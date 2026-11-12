@@ -90,8 +90,11 @@ Next: install a pinned JSON Schema 2020-12 validator; add Janus/AEI/AgenticBench
 |---|---|
 | Owner-supplied UNIVERSALIS candidate inventory | Documented |
 | Eight shared contract families | Implemented in this branch |
-| Synthetic fixtures and eight negative semantic tests | Implemented in this branch |
+| Synthetic fixtures and ten negative semantic tests | Implemented in this branch |
 | Dedicated CI workflow | Passed — see INTELLIGENCE_CAPABILITIES_VALIDATION.md |
 | Third-party tools installed/integrated | None independently verified |
 | Cryptographic verification and full JSON Schema validation | Pending |
 | Real capability benchmark and self-improvement results | Not performed |
+
+
+**Validation note:** The initial eight-case contract revision passed the recorded CI runs. The current branch strengthens C2O plan-node tool-scope and human-permit enforcement and now contains ten negative cases; a new GitHub Actions run for that exact revision is still pending/unavailable. See INTELLIGENCE_CAPABILITIES_VALIDATION.md for the distinction.
