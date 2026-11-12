@@ -989,6 +989,12 @@
                 "string",
                 "null"
               ]
+            },
+            "permit_ref": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           }
         },
