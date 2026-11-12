@@ -1,0 +1,287 @@
+{
+  "schema_version": "1.0.0",
+  "capability_profile": {
+    "schema_version": "1.0.0",
+    "profile_id": "profile-fixture-001",
+    "subject": {
+      "subject_ref": "agent:synthetic-fixture",
+      "subject_kind": "agent",
+      "visibility": "sanitized",
+      "display_name": "Synthetic agent"
+    },
+    "benchmark": {
+      "benchmark_id": "janus-compatible-fixture",
+      "version": "1.0.0",
+      "suite_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "protocol_ref": "benchmark-protocol:fixture",
+      "started_at": "2026-11-12T10:00:00Z",
+      "completed_at": "2026-11-12T10:20:00Z",
+      "reproducible": true,
+      "held_out": true,
+      "dataset_ref": null
+    },
+    "axes": [
+      {
+        "axis_id": "code_quality",
+        "score": 80,
+        "scale_min": 0,
+        "scale_max": 100,
+        "task_refs": [
+          "task-code-1"
+        ],
+        "limitations": [
+          "No production repository tested"
+        ],
+        "evidence_refs": [
+          "evidence:code-1"
+        ]
+      },
+      {
+        "axis_id": "error_resilience",
+        "score": 75,
+        "scale_min": 0,
+        "scale_max": 100,
+        "task_refs": [
+          "task-resilience-1"
+        ],
+        "limitations": [
+          "Synthetic failures only"
+        ],
+        "evidence_refs": [
+          "evidence:resilience-1"
+        ]
+      }
+    ],
+    "overall": {
+      "aggregation_method": "arithmetic_mean",
+      "score": 77.5,
+      "quality_gate_passed": true
+    },
+    "environment": {
+      "harness_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "protocol_version": "1.0.0",
+      "hardware_profile_ref": "hardware:fixture",
+      "model_ref": "model:fixture",
+      "weights_shared": false,
+      "raw_data_shared": false
+    },
+    "attestation": {
+      "scheme": "ML-DSA-5",
+      "statement_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "merkle_root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "signer_ref": "signer:fixture",
+      "issued_at": "2026-11-12T10:21:00Z",
+      "signature": "synthetic-placeholder-not-valid-cryptographic-signature",
+      "offline_bundle_ref": "bundle:synthetic-placeholder",
+      "verification_status": "unverified",
+      "verified_by": null,
+      "verified_at": null,
+      "ast_findings_sha256": null,
+      "fail_closed_handoff_tests": [
+        {
+          "test_ref": "handoff-test:fixture",
+          "passed": true
+        }
+      ]
+    }
+  },
+  "plan_dag": {
+    "schema_version": "1.0.0",
+    "plan_id": "plan-fixture-001",
+    "created_at": "2026-11-12T10:00:00Z",
+    "goal_ref": "goal:fixture",
+    "nodes": [
+      {
+        "node_id": "inspect",
+        "action_ref": "action:inspect",
+        "depends_on": [],
+        "preconditions": [
+          "scope granted"
+        ],
+        "postconditions": [
+          "inventory recorded"
+        ],
+        "verification_ref": "verify:inventory",
+        "tool_scope_ref": "scope:read"
+      },
+      {
+        "node_id": "plan",
+        "action_ref": "action:plan",
+        "depends_on": [
+          "inspect"
+        ],
+        "preconditions": [
+          "inventory recorded"
+        ],
+        "postconditions": [
+          "plan valid"
+        ],
+        "verification_ref": "verify:plan",
+        "tool_scope_ref": null
+      },
+      {
+        "node_id": "execute",
+        "action_ref": "action:execute",
+        "depends_on": [
+          "plan"
+        ],
+        "preconditions": [
+          "plan valid",
+          "permit valid"
+        ],
+        "postconditions": [
+          "result recorded"
+        ],
+        "verification_ref": "verify:result",
+        "tool_scope_ref": "scope:execute"
+      }
+    ],
+    "preconditions": [
+      "goal is defined"
+    ],
+    "verification_requirements": [
+      "each action result has an independent receipt"
+    ]
+  },
+  "self_model_state": {
+    "schema_version": "1.0.0",
+    "snapshot_id": "self-model-fixture",
+    "observed_at": "2026-11-12T10:00:00Z",
+    "capability_calibrations": [
+      {
+        "capability_id": "planning",
+        "estimated_level": 0.7,
+        "calibration_ref": "calibration:fixture",
+        "last_assessed_at": "2026-11-10T10:00:00Z"
+      }
+    ],
+    "limitations": [
+      {
+        "limitation_id": "limit-1",
+        "description": "Cannot infer real-world facts without source evidence",
+        "evidence_ref": "evaluation:fixture"
+      }
+    ],
+    "process_health": {
+      "status": "healthy",
+      "signals": [
+        {
+          "signal_id": "queue-depth",
+          "value": 2,
+          "observed_at": "2026-11-12T10:00:00Z"
+        }
+      ]
+    },
+    "uncertainty": 0.2
+  },
+  "world_model_request": {
+    "schema_version": "1.0.0",
+    "request_id": "wm-request-001",
+    "operation": "predict",
+    "model_ref": "wm:local-fixture",
+    "handles": [
+      {
+        "handle_id": "opaque-video-handle-001",
+        "media_type": "video"
+      }
+    ],
+    "parameters": {
+      "horizon_frames": 8
+    },
+    "privacy": {
+      "raw_media_stays_local": true,
+      "latents_stay_local": true
+    }
+  },
+  "world_model_response": {
+    "schema_version": "1.0.0",
+    "request_id": "wm-request-001",
+    "status": "success",
+    "result_handle_ids": [
+      "opaque-prediction-handle-001"
+    ],
+    "metrics": [
+      {
+        "metric_id": "surprise",
+        "value": 0.12
+      },
+      {
+        "metric_id": "similarity",
+        "value": 0.91
+      }
+    ],
+    "provenance_ref": "world-model-run:fixture"
+  },
+  "compute_budget": {
+    "schema_version": "1.0.0",
+    "budget_id": "compute-budget-fixture",
+    "issued_at": "2026-11-12T10:00:00Z",
+    "total_budget": {
+      "unit": "tokens",
+      "limit": 10000
+    },
+    "allocations": [
+      {
+        "step_id": "plan",
+        "amount": 2000
+      },
+      {
+        "step_id": "execute",
+        "amount": 3000
+      }
+    ],
+    "remaining": 5000,
+    "stopping_criteria": [
+      {
+        "criterion": "remaining_tokens_minimum",
+        "threshold": 500
+      },
+      {
+        "criterion": "deadline",
+        "threshold": "2026-11-12T10:30:00Z"
+      }
+    ]
+  },
+  "self_improvement_proposal": {
+    "schema_version": "1.0.0",
+    "proposal_id": "improvement-fixture",
+    "target_kind": "skill_document",
+    "target_ref": "skills/planner.md",
+    "baseline_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "candidate_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "edit_operations": [
+      {
+        "operation": "replace",
+        "path": "skills/planner.md#step-2",
+        "change_sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+      }
+    ],
+    "loop_stage": "probe",
+    "held_out_gate": {
+      "suite_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "baseline_score": 0.7,
+      "candidate_score": 0.75,
+      "objective": "maximize",
+      "strict_improvement": true,
+      "passed": true
+    },
+    "review": {
+      "status": "approved",
+      "reviewer_ref": "reviewer:independent"
+    },
+    "release_ref": "release:fixture",
+    "model_weights_changed": false
+  },
+  "sovereignty_boundary": {
+    "schema_version": "1.0.0",
+    "boundary_id": "boundary-fixture-universalis",
+    "owner": "universalis",
+    "deployment_mode": "local_first",
+    "data_residency": "operator-selected-local-device",
+    "model_weights_residency": "operator-selected-local-device",
+    "inference_traffic_residency": "operator-selected-local-device",
+    "egress_default": "deny",
+    "egress_allowlist": [],
+    "audit_required": true
+  }
+}
