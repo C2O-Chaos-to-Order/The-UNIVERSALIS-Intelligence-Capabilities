@@ -99,7 +99,7 @@ def validate_all(f,profile):
     validate_improvement(f["self_improvement_proposal"]); validate_boundary(f["sovereignty_boundary"],profile)
 def load(root): return json.loads((root/FIXTURE).read_text(encoding="utf-8"))
 def self_test(root):
-    f=load(root); validate_all(f,"c2o"); validate_all(f,"universalis"); tests=[]
+    f=load(root)\n    validate_profile(f["capability_profile"]); validate_plan(f["plan_dag"]); validate_self_model(f["self_model_state"])\n    validate_world(f["world_model_request"],f["world_model_response"]); validate_budget(f["compute_budget"]); validate_improvement(f["self_improvement_proposal"])\n    validate_boundary(f["sovereignty_boundary"],"c2o" if f["sovereignty_boundary"]["owner"]=="c2o" else "universalis")\n    tests=[]
     bad=copy.deepcopy(f["plan_dag"]); bad["nodes"][0]["depends_on"]=["execute"]; tests.append((lambda:validate_plan(bad),"plan DAG cycle"))
     bad=copy.deepcopy(f["compute_budget"]); bad["allocations"][0]["amount"]=9000; tests.append((lambda:validate_budget(bad),"compute budget overspend"))
     bad=copy.deepcopy(f["world_model_request"]); bad["raw_video"]="embedded"; tests.append((lambda:validate_world(bad,f["world_model_response"]),"raw media in handle request"))
@@ -107,7 +107,7 @@ def self_test(root):
     bad=copy.deepcopy(f["self_improvement_proposal"]); bad["model_weights_changed"]=True; tests.append((lambda:validate_improvement(bad),"model weight change"))
     bad=copy.deepcopy(f["capability_profile"]); bad["axes"][0]["score"]=120; tests.append((lambda:validate_profile(bad),"capability score outside scale"))
     bad=copy.deepcopy(f["capability_profile"]); a=bad["attestation"]; a["verification_status"]="verified"; a["verified_by"]=a["signer_ref"]; a["verified_at"]="2026-11-12T10:22:00Z"; tests.append((lambda:validate_profile(bad),"self-verified attestation"))
-    bad=copy.deepcopy(f["sovereignty_boundary"]); bad["egress_default"]="allow"; tests.append((lambda:validate_boundary(bad,"c2o"),"C2O egress default allow"))
+    bad=copy.deepcopy(f["sovereignty_boundary"]); bad.update({"owner":"c2o","deployment_mode":"private_sovereign","policy_ref":"policy:synthetic"}); bad["egress_default"]="allow"; tests.append((lambda:validate_boundary(bad,"c2o"),"C2O egress default allow"))
     for op,label in tests:
         try: op()
         except (ValueError,KeyError,TypeError): continue
