@@ -86,3 +86,7 @@ Treat every third-party name in that register as a proposed candidate/reference 
 See INTELLIGENCE_CAPABILITIES_ARCHITECTURE.md for the complete owner-supplied tool inventory and the boundary-specific build posture. Shared contract definitions are in schemas/intelligence-capabilities/intelligence-capability-contracts.v1.schema.json; profile-specific synthetic fixtures and semantic checks are in examples/intelligence_capabilities/contracts.v1.json and .github/scripts/intelligence_capability_contract.py. Third-party products remain candidates pending verification.
 
 Intelligence Capabilities contract CI passed. The exact run IDs, negative cases, and outstanding cryptographic, benchmark, and product-integration work are recorded in INTELLIGENCE_CAPABILITIES_VALIDATION.md.
+
+## Master toolchain coverage register — 2026-11-12
+
+The current public inventory for the original four toolchain documents plus the Intelligence Capabilities source is maintained in the UNIVERSALIS research register: https://github.com/C2O-Chaos-to-Order/Research-for-the-UNIVERSALIS-Ecosystem/blob/implementation/repository-foundation-2026-11-12/TOOLCHAIN_COVERAGE_REGISTER.md. It distinguishes documentation, basic contracts, passing CI, and actual integrations. This public register contains no links to C2O-private owner repositories or policy values.
