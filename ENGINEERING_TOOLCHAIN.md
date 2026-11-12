@@ -90,3 +90,10 @@ Intelligence Capabilities contract CI passed. The exact run IDs, negative cases,
 ## Master toolchain coverage register — 2026-11-12
 
 The current public inventory for the original four toolchain documents plus the Intelligence Capabilities source is maintained in the UNIVERSALIS research register: https://github.com/C2O-Chaos-to-Order/Research-for-the-UNIVERSALIS-Ecosystem/blob/implementation/repository-foundation-2026-11-12/TOOLCHAIN_COVERAGE_REGISTER.md. It distinguishes documentation, basic contracts, passing CI, and actual integrations. This public register contains no links to C2O-private owner repositories or policy values.
+
+
+## Security and Cybersecurity — eleventh owner-supplied source — 2026-11-12
+
+Canonical public architecture: [UNIVERSALIS Security and Cybersecurity](https://github.com/C2O-Chaos-to-Order/The-UNIVERSALIS-Ecosystem/blob/implementation/repository-foundation-2026-11-12/SECURITY_CYBERSECURITY_ARCHITECTURE.md). The public security contract, synthetic fixtures and validation evidence are linked from that architecture. The [UNIVERSALIS eleven-source master toolchain register](https://github.com/C2O-Chaos-to-Order/Research-for-the-UNIVERSALIS-Ecosystem/blob/implementation/repository-foundation-2026-11-12/TOOLCHAIN_COVERAGE_REGISTER.md) preserves candidate provenance, verification caveats and integration limits.
+
+Public repositories contain only portable contracts and synthetic examples: no C2O-private policies, keys, incident data, authority records or target inventories. External security tools remain candidates until source, license, release, data flow, platform and enforcement behavior are reviewed. No security product or offensive assessment system is claimed integrated.
