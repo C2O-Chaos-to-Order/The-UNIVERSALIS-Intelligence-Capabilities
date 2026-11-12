@@ -99,7 +99,10 @@ def validate_all(f,profile):
     validate_improvement(f["self_improvement_proposal"]); validate_boundary(f["sovereignty_boundary"],profile)
 def load(root): return json.loads((root/FIXTURE).read_text(encoding="utf-8"))
 def self_test(root):
-    f=load(root)\n    validate_profile(f["capability_profile"]); validate_plan(f["plan_dag"]); validate_self_model(f["self_model_state"])\n    validate_world(f["world_model_request"],f["world_model_response"]); validate_budget(f["compute_budget"]); validate_improvement(f["self_improvement_proposal"])\n    validate_boundary(f["sovereignty_boundary"],"c2o" if f["sovereignty_boundary"]["owner"]=="c2o" else "universalis")\n    tests=[]
+    f=load(root)
+    profile = f["sovereignty_boundary"]["owner"]
+    validate_all(f, profile)
+    tests=[]
     bad=copy.deepcopy(f["plan_dag"]); bad["nodes"][0]["depends_on"]=["execute"]; tests.append((lambda:validate_plan(bad),"plan DAG cycle"))
     bad=copy.deepcopy(f["compute_budget"]); bad["allocations"][0]["amount"]=9000; tests.append((lambda:validate_budget(bad),"compute budget overspend"))
     bad=copy.deepcopy(f["world_model_request"]); bad["raw_video"]="embedded"; tests.append((lambda:validate_world(bad,f["world_model_response"]),"raw media in handle request"))
