@@ -4,6 +4,9 @@
 **Posture:** Open, inspectable, independently operable, and portable.  
 **Status:** First shared contract and semantic-test foundation implemented in this branch. External products remain candidates pending source, license, security, maintenance, and compatibility review.
 
+
+> **Master-integration note (2026-11-16).** This file changed on both `main` and PR #6. The master branch keeps **both** versions by text union, so some statements appear twice (for example the two **Status:** lines and the two schema summaries). Nothing was dropped; de-duplication is left for review. "Implemented in this branch" refers to PR #6's branch: the schema and examples are folded here, but the dependency-free validator under `.github/scripts/` is **held** with all `.github` content (owner decision C-12b) and is not on this branch.
+
 ## 1. Capability architecture
 
 UNIVERSALIS Intelligence Capabilities are composable mechanisms for planning, self-model calibration, world-model interaction, adaptive inference-time compute, skill/harness improvement, and benchmark attestation. Capabilities have explicit inputs, budgets, outputs, evidence, and limitations. A benchmark score is not a complete description of an agent and is not an authorization grant.
