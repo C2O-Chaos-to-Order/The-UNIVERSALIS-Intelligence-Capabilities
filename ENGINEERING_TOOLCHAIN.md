@@ -49,19 +49,22 @@ Verify each candidate's source, license, maintainer, release activity, security,
 The following are the canonical working records for the latest owner-supplied toolchain proposals. This repository records the references and boundary rules; implementation belongs in the domain-owning repositories.
 
 ### Human Knowledge
-- [C2O Human Knowledge architecture](https://github.com/C2O-Chaos-to-Order/The-C2O-Human-Knowledge/blob/implementation/repository-foundation-2026-11-12/HUMAN_KNOWLEDGE_ARCHITECTURE.md), [shared MCP interface contracts](https://github.com/C2O-Chaos-to-Order/The-C2O-Human-Knowledge/blob/implementation/repository-foundation-2026-11-12/MCP_INTERFACE_CONTRACTS.md), and [validation evidence](https://github.com/C2O-Chaos-to-Order/The-C2O-Human-Knowledge/blob/implementation/repository-foundation-2026-11-12/HUMAN_KNOWLEDGE_VALIDATION.md).
 - [UNIVERSALIS Human Knowledge architecture](https://github.com/C2O-Chaos-to-Order/The-UNIVERSALIS-Human-Knowledge/blob/implementation/repository-foundation-2026-11-12/HUMAN_KNOWLEDGE_ARCHITECTURE.md), [shared MCP interface contracts](https://github.com/C2O-Chaos-to-Order/The-UNIVERSALIS-Human-Knowledge/blob/implementation/repository-foundation-2026-11-12/MCP_INTERFACE_CONTRACTS.md), and [validation evidence](https://github.com/C2O-Chaos-to-Order/The-UNIVERSALIS-Human-Knowledge/blob/implementation/repository-foundation-2026-11-12/HUMAN_KNOWLEDGE_VALIDATION.md).
 
+The private counterpart is separately stewarded. This public register intentionally contains no link to, copy of, or mirror of private-source architecture or operational records.
+
 ### OS provisioning and virtualization
-- [C2O private provisioning architecture](https://github.com/C2O-Chaos-to-Order/The-C2O-Ecosystem/blob/implementation/repository-foundation-2026-11-12/OS_PROVISIONING_ARCHITECTURE.md).
 - [UNIVERSALIS open provisioning architecture](https://github.com/C2O-Chaos-to-Order/The-UNIVERSALIS-Ecosystem/blob/implementation/repository-foundation-2026-11-12/OS_PROVISIONING_ARCHITECTURE.md).
 
+Private provisioning implementations are separately governed and are not linked or reproduced in this public toolchain record.
+
 ### UNIVERSALIN Grid, Guardian, and Golden Compass
-- [C2O boundary and verifier architecture](https://github.com/C2O-Chaos-to-Order/The-C2O-Ecosystem/blob/implementation/repository-foundation-2026-11-12/UNIVERSALIN_GUARDIAN_GOLDEN_COMPASS.md).
 - [UNIVERSALIS Grid / Guardian / Compass architecture](https://github.com/C2O-Chaos-to-Order/The-UNIVERSALIS-Ecosystem/blob/implementation/repository-foundation-2026-11-12/UNIVERSALIN_GUARDIAN_GOLDEN_COMPASS.md).
 
+Private boundary and verifier implementations remain separately stewarded and are not linked or copied into this public architecture register.
+
 ### Boundary and evidence status
-C2O-private credentials, policies, identity state, authority tokens, private source text, and operational evidence remain inside authorized C2O environments. UNIVERSALIS remains public, local-first, inspectable, and independently operable. Only versioned, explicitly approved interface schemas and evidence packages may cross the boundary; an interface does not grant authority.
+UNIVERSALIS remains public, local-first, inspectable, and independently operable. Private counterpart credentials, policies, identity state, authority tokens, source text, and operational evidence are not part of this repository. Only versioned, explicitly approved portable interface schemas and evidence packages may cross a separately governed boundary; an interface does not grant authority.
 
 All named external tools remain owner-supplied candidates or reference patterns pending canonical-source, license, maintainer, release, security, compatibility, and claim verification. No candidate is represented as installed or adopted merely because it appears in these records.
 
@@ -85,7 +88,7 @@ Treat every third-party name in that register as a proposed candidate/reference 
 
 See INTELLIGENCE_CAPABILITIES_ARCHITECTURE.md for the complete owner-supplied tool inventory and the boundary-specific build posture. Shared contract definitions are in schemas/intelligence-capabilities/intelligence-capability-contracts.v1.schema.json; profile-specific synthetic fixtures and semantic checks are in examples/intelligence_capabilities/contracts.v1.json and .github/scripts/intelligence_capability_contract.py. Third-party products remain candidates pending verification.
 
-Intelligence Capabilities contract CI passed. The exact run IDs, negative cases, and outstanding cryptographic, benchmark, and product-integration work are recorded in INTELLIGENCE_CAPABILITIES_VALIDATION.md.
+The initial Intelligence Capabilities contract revision passed CI; the corrected public-only revision is awaiting its own current-head run. The historical run IDs, current negative cases, and outstanding cryptographic, benchmark, and product-integration work are distinguished in INTELLIGENCE_CAPABILITIES_VALIDATION.md.
 
 ## Master toolchain coverage register — 2026-11-12
 
