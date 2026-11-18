@@ -90,11 +90,11 @@ Next: install a pinned JSON Schema 2020-12 validator; add Janus/AEI/AgenticBench
 |---|---|
 | Owner-supplied UNIVERSALIS candidate inventory | Documented |
 | Eight shared contract families | Implemented in this branch |
-| Synthetic fixtures and ten negative semantic tests | Implemented in this branch |
-| Dedicated CI workflow | Passed — see INTELLIGENCE_CAPABILITIES_VALIDATION.md |
+| Synthetic fixtures and ten negative semantic tests | Implemented in this branch; exact-head execution pending |
+| Dedicated CI workflow | Earlier revision passed; corrected public-only revision awaiting current-head run |
 | Third-party tools installed/integrated | None independently verified |
 | Cryptographic verification and full JSON Schema validation | Pending |
 | Real capability benchmark and self-improvement results | Not performed |
 
 
-**Validation note:** The initial eight-case contract revision passed the recorded CI runs. The current branch strengthens C2O plan-node tool-scope and human-permit enforcement and now contains ten negative cases; a new GitHub Actions run for that exact revision is still pending/unavailable. See INTELLIGENCE_CAPABILITIES_VALIDATION.md for the distinction.
+**Validation note:** The recorded eight-case CI runs apply only to the earlier validator revision. The current public UNIVERSALIS validator requires explicit tool scope for every Plan DAG node, enforces the local-first/deny-by-default boundary, and rejects private policy references in public fixtures. Its ten negative cases have not yet been re-run in CI on this revision; see INTELLIGENCE_CAPABILITIES_VALIDATION.md.
