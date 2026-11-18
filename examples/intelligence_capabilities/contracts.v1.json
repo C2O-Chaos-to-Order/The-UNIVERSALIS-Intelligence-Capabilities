@@ -127,7 +127,7 @@
         ],
         "preconditions": [
           "plan valid",
-          "permit valid"
+          "approval and scope valid"
         ],
         "postconditions": [
           "result recorded"
@@ -267,8 +267,7 @@
     },
     "review": {
       "status": "approved",
-      "reviewer_ref": "reviewer:independent",
-      "permit_ref": null
+      "reviewer_ref": "reviewer:independent"
     },
     "release_ref": "release:fixture",
     "model_weights_changed": false
