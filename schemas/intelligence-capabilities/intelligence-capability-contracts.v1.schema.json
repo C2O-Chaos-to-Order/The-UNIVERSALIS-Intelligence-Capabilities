@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:c2o-universalis:intelligence-capabilities:v1",
+  "$id": "urn:universalis:intelligence-capabilities:v1",
   "title": "Intelligence Capabilities Shared Contracts v1",
   "description": "Portable capability profile, attestation, plan DAG, self-model, handle-based world-model, compute budget, held-out self-improvement, and sovereignty-boundary contracts.",
   "oneOf": [
@@ -406,7 +406,8 @@
               "depends_on",
               "preconditions",
               "postconditions",
-              "verification_ref"
+              "verification_ref",
+              "tool_scope_ref"
             ],
             "properties": {
               "node_id": {
@@ -444,10 +445,8 @@
                 "minLength": 1
               },
               "tool_scope_ref": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": "string",
+                "minLength": 1
               }
             }
           }
@@ -989,12 +988,6 @@
                 "string",
                 "null"
               ]
-            },
-            "permit_ref": {
-              "type": [
-                "string",
-                "null"
-              ]
             }
           }
         },
@@ -1034,17 +1027,12 @@
         },
         "owner": {
           "enum": [
-            "c2o",
-            "universalis",
-            "operator"
+            "universalis"
           ]
         },
         "deployment_mode": {
           "enum": [
-            "private_sovereign",
-            "local_first",
-            "hybrid",
-            "air_gapped"
+            "local_first"
           ]
         },
         "data_residency": {
