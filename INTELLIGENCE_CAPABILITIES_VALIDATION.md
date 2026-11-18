@@ -44,7 +44,7 @@ The listed runs are historical evidence for the initial mixed-profile validator 
 - The repository-quality baseline validated JSON syntax on that earlier revision.
 - None of these results establishes that the 2026-11-18 public-only revision passes.
 
-## Current public-only validator revision — 10 cases; NOT YET CI-EXECUTED
+## Current public-only validator revision — 10 cases; CI PASSED 2026-11-18
 
 The public contract is now UNIVERSALIS-only. The validator no longer contains the separate private-profile branch or private-permit rule. The public schema namespace is `urn:universalis:intelligence-capabilities:v1`; the only permitted boundary owner is `universalis`; deployment is `local_first`; every Plan DAG node requires a non-empty tool-scope reference; and public fixtures cannot carry a private policy reference. The workflow invokes the public-only check without a profile switch.
 
@@ -61,7 +61,7 @@ The validator includes ten negative cases:
 9. Plan DAG node missing an explicit tool-scope reference.
 10. Private policy reference present in a public boundary.
 
-These changes were committed on 2026-11-18. The earlier run IDs above do not validate this revision. A new GitHub Actions run on the corrected pull-request head is required before any pass is recorded.
+These changes were committed on 2026-11-18. The earlier run IDs above remain historical and do not validate this revision. The corrected public-only revision was executed successfully by GitHub Actions run [44379146071](https://github.com/C2O-Chaos-to-Order/The-UNIVERSALIS-Intelligence-Capabilities/actions/runs/44379146071) on commit `2aacabe5961a90515a225d9e361e96d775252453` (push event, 2026-11-18). The run passed the positive/negative self-test, UNIVERSALIS profile validation, and repository-quality baseline step. This is synthetic contract validation, not integration or production assurance.
 
 ## Limits and unresolved work
 
