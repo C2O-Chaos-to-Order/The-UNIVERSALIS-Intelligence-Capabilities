@@ -1,6 +1,7 @@
 # Intelligence Capabilities Contract Validation Record
 
-**Date:** 2026-11-12  
+**Original CI record:** 2026-11-12  
+**Public-only contract revision updated:** 2026-11-18  
 **Profile:** UNIVERSALIS  
 **Branch:** implementation/repository-foundation-2026-11-12
 
@@ -11,7 +12,7 @@
 | Intelligence Capabilities Contract | Passed | [Run 43241755277](https://github.com/C2O-Chaos-to-Order/The-UNIVERSALIS-Intelligence-Capabilities/actions/runs/43241755277) |
 | Repository quality baseline | Passed | [Run 43241754989](https://github.com/C2O-Chaos-to-Order/The-UNIVERSALIS-Intelligence-Capabilities/actions/runs/43241754989) |
 
-The contract workflow completed Python runtime setup, seven shared contract-family checks, eight negative cases on the initial validator revision, the UNIVERSALIS local-first boundary profile, and the repository-quality baseline. Every step passed.
+The listed runs are historical evidence for the initial mixed-profile validator revision only. They completed Python runtime setup, seven shared contract-family checks, eight negative cases, the then-current UNIVERSALIS local-first fixture, and the repository-quality baseline. They do not validate the public-only schema, validator, fixture, or workflow changes recorded on 2026-11-18.
 
 ## Contract families exercised
 
@@ -33,18 +34,34 @@ The contract workflow completed Python runtime setup, seven shared contract-fami
 5. Attempted model-weight modification.
 6. Capability score outside declared axis scale.
 7. Self-verification of an attestation.
-8. C2O sovereignty boundary configured with egress default allow.
+8. UNIVERSALIS public boundary configured with egress default allow.
 
 ## What this establishes
 
-- The dependency-free semantic validator runs in GitHub Actions.
-- The synthetic fixture passes the UNIVERSALIS profile.
-- Eight intended negative cases are rejected.
-- The repository-quality baseline validates the schema/fixture/configuration JSON syntax.
+- The earlier dependency-free semantic validator ran in GitHub Actions on the 2026-11-12 revision.
+- The historical synthetic fixture passed the then-current UNIVERSALIS profile.
+- Eight intended negative cases were rejected in those historical runs.
+- The repository-quality baseline validated JSON syntax on that earlier revision.
+- None of these results establishes that the 2026-11-18 public-only revision passes.
 
-## Additional hardening in the current branch revision (10 cases)
+## Current public-only validator revision — 10 cases; NOT YET CI-EXECUTED
 
-The current validator source adds two further C2O-specific negative checks: a Plan DAG node without an explicit tool-scope reference is rejected under the C2O profile, and an approved C2O skill/harness change without a human-held permit reference is rejected. The compute-budget validator also now rejects negative allocations/remaining amounts and duplicate step allocations. These changes are present in the current implementation branch, but a new GitHub Actions run for this exact strengthened revision has not yet been surfaced. The passing run IDs above apply to the earlier eight-case revision only.
+The public contract is now UNIVERSALIS-only. The validator no longer contains the separate private-profile branch or private-permit rule. The public schema namespace is `urn:universalis:intelligence-capabilities:v1`; the only permitted boundary owner is `universalis`; deployment is `local_first`; every Plan DAG node requires a non-empty tool-scope reference; and public fixtures cannot carry a private policy reference. The workflow invokes the public-only check without a profile switch.
+
+The validator includes ten negative cases:
+
+1. Plan DAG cycle.
+2. Compute-budget overspend.
+3. Raw media embedded in a handle-based world-model request.
+4. No strict held-out improvement.
+5. Attempted model-weight modification.
+6. Capability score outside the declared axis scale.
+7. Self-verification of an attestation.
+8. UNIVERSALIS public boundary configured with egress default allow.
+9. Plan DAG node missing an explicit tool-scope reference.
+10. Private policy reference present in a public boundary.
+
+These changes were committed on 2026-11-18. The earlier run IDs above do not validate this revision. A new GitHub Actions run on the corrected pull-request head is required before any pass is recorded.
 
 ## Limits and unresolved work
 
