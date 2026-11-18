@@ -37,25 +37,41 @@ def validate_profile(p):
         expected=sum(a["score"] for a in p["axes"])/len(p["axes"])
         if not math.isclose(expected,p["overall"]["score"],rel_tol=1e-9,abs_tol=1e-9): raise ValueError("overall score does not match arithmetic mean")
     validate_attestation(p["attestation"])
-def validate_plan(p,profile):
-    timestamp(p["created_at"],"plan.created_at")
-    nodes=p["nodes"]; ids=[n["node_id"] for n in nodes]
-    if len(ids)!=len(set(ids)): raise ValueError("duplicate plan node IDs")
-    known=set(ids); degree={x:0 for x in ids}; children={x:[] for x in ids}
+def validate_plan(p):
+    timestamp(p["created_at"], "plan.created_at")
+    nodes = p["nodes"]
+    ids = [node["node_id"] for node in nodes]
+    if len(ids) != len(set(ids)):
+        raise ValueError("duplicate plan node IDs")
+
+    known = set(ids)
+    degree = {node_id: 0 for node_id in ids}
+    children = {node_id: [] for node_id in ids}
     for node in nodes:
-        if not node.get("verification_ref"): raise ValueError("every plan node requires verification reference")
-        if profile=="c2o" and not node.get("tool_scope_ref"): raise ValueError("C2O Plan DAG node requires explicit tool-scope reference")
-        for dep in node["depends_on"]:
-            if dep not in known: raise ValueError("plan dependency references unknown node")
-            if dep==node["node_id"]: raise ValueError("plan node cannot depend on itself")
-            degree[node["node_id"]]+=1; children[dep].append(node["node_id"])
-    queue=[n for n,d in degree.items() if d==0]; visited=0
+        if not node.get("verification_ref"):
+            raise ValueError("every plan node requires a verification reference")
+        scope_ref = node.get("tool_scope_ref")
+        if not isinstance(scope_ref, str) or not scope_ref.strip():
+            raise ValueError("every UNIVERSALIS Plan DAG node requires an explicit tool-scope reference")
+        for dependency in node["depends_on"]:
+            if dependency not in known:
+                raise ValueError("plan dependency references an unknown node")
+            if dependency == node["node_id"]:
+                raise ValueError("plan node cannot depend on itself")
+            degree[node["node_id"]] += 1
+            children[dependency].append(node["node_id"])
+
+    queue = [node_id for node_id, value in degree.items() if value == 0]
+    visited = 0
     while queue:
-        n=queue.pop(); visited+=1
-        for child in children[n]:
-            degree[child]-=1
-            if degree[child]==0: queue.append(child)
-    if visited!=len(nodes): raise ValueError("plan dependencies contain a cycle")
+        node_id = queue.pop()
+        visited += 1
+        for child in children[node_id]:
+            degree[child] -= 1
+            if degree[child] == 0:
+                queue.append(child)
+    if visited != len(nodes):
+        raise ValueError("plan dependencies contain a cycle")
 
 def validate_self_model(s):
     timestamp(s["observed_at"],"self_model.observed_at")
@@ -90,60 +106,128 @@ def validate_budget(b):
     if allocated+b["remaining"]>total+1e-9: raise ValueError("compute allocations exceed granted budget")
     if not math.isclose(allocated+b["remaining"],total,rel_tol=1e-9,abs_tol=1e-9): raise ValueError("allocations plus remaining must reconcile to grant")
 
-def validate_improvement(p,profile):
-    if p["baseline_sha256"]==p["candidate_sha256"]: raise ValueError("candidate must change artifact hash")
-    if p["model_weights_changed"] is not False: raise ValueError("contract does not authorize model-weight changes")
-    g=p["held_out_gate"]
-    if p["loop_stage"] in {"probe","compose"}:
-        improved=g["candidate_score"]>g["baseline_score"] if g["objective"]=="maximize" else g["candidate_score"]<g["baseline_score"]
-        if g["strict_improvement"]!=improved or g["passed"]!=improved: raise ValueError("held-out gate passes only on strict improvement")
-    if p["review"]["status"]=="approved" and (not g["passed"] or not p["review"].get("reviewer_ref")): raise ValueError("approved proposal requires passed held-out gate and reviewer")
-    if profile=="c2o" and p["review"]["status"]=="approved" and not p["review"].get("permit_ref"): raise ValueError("C2O approved skill/harness change requires human-held permit reference")
+def validate_improvement(p):
+    if p["baseline_sha256"] == p["candidate_sha256"]:
+        raise ValueError("candidate must change artifact hash")
+    if p["model_weights_changed"] is not False:
+        raise ValueError("contract does not authorize model-weight changes")
+    gate = p["held_out_gate"]
+    if p["loop_stage"] in {"probe", "compose"}:
+        improved = (
+            gate["candidate_score"] > gate["baseline_score"]
+            if gate["objective"] == "maximize"
+            else gate["candidate_score"] < gate["baseline_score"]
+        )
+        if gate["strict_improvement"] != improved or gate["passed"] != improved:
+            raise ValueError("held-out gate passes only on strict improvement")
+    if p["review"]["status"] == "approved":
+        if not gate["passed"] or not p["review"].get("reviewer_ref"):
+            raise ValueError("approved proposal requires a passed held-out gate and reviewer")
 
-def validate_boundary(b,profile):
-    if profile=="c2o":
-        if b["owner"]!="c2o" or b["deployment_mode"] not in {"private_sovereign","air_gapped"}: raise ValueError("C2O requires private sovereign or air-gapped boundary")
-        if b["egress_default"]!="deny" or not b["audit_required"] or not b.get("policy_ref"): raise ValueError("C2O requires deny-by-default egress, audit, and private policy reference")
-        if not (b["data_residency"]==b["model_weights_residency"]==b["inference_traffic_residency"]): raise ValueError("C2O data, weights, and traffic must share sovereign boundary")
-    else:
-        if b["owner"]!="universalis": raise ValueError("UNIVERSALIS profile requires independently owned boundary")
-        if b.get("policy_ref"): raise ValueError("UNIVERSALIS fixture cannot contain C2O-private policy reference")
 
-def validate_all(f,profile):
+def validate_boundary(boundary):
+    if boundary["owner"] != "universalis":
+        raise ValueError("UNIVERSALIS requires an independently owned public boundary")
+    if boundary["deployment_mode"] != "local_first":
+        raise ValueError("UNIVERSALIS requires a local-first deployment boundary")
+    if boundary["egress_default"] != "deny" or boundary["audit_required"] is not True:
+        raise ValueError("UNIVERSALIS requires deny-by-default egress and an audit trail")
+    if boundary.get("policy_ref"):
+        raise ValueError("public UNIVERSALIS fixtures cannot contain private policy references")
+    if not (
+        boundary["data_residency"]
+        == boundary["model_weights_residency"]
+        == boundary["inference_traffic_residency"]
+    ):
+        raise ValueError("UNIVERSALIS data, model weights, and inference traffic must share the declared local-first boundary")
+
+def validate_all(f):
     validate_profile(f["capability_profile"])
-    validate_plan(f["plan_dag"],profile)
+    validate_plan(f["plan_dag"])
     validate_self_model(f["self_model_state"])
-    validate_world(f["world_model_request"],f["world_model_response"])
+    validate_world(f["world_model_request"], f["world_model_response"])
     validate_budget(f["compute_budget"])
-    validate_improvement(f["self_improvement_proposal"],profile)
-    validate_boundary(f["sovereignty_boundary"],profile)
+    validate_improvement(f["self_improvement_proposal"])
+    validate_boundary(f["sovereignty_boundary"])
 def load(root): return json.loads((root/FIXTURE).read_text(encoding="utf-8"))
 def self_test(root):
-    f=load(root)
-    profile=f["sovereignty_boundary"]["owner"]
-    validate_all(f,profile)
-    tests=[]
-    bad=copy.deepcopy(f["plan_dag"]); bad["nodes"][0]["depends_on"]=["execute"]; tests.append((lambda:validate_plan(bad,profile),"plan DAG cycle"))
-    bad=copy.deepcopy(f["compute_budget"]); bad["allocations"][0]["amount"]=9000; tests.append((lambda:validate_budget(bad),"compute budget overspend"))
-    bad=copy.deepcopy(f["world_model_request"]); bad["raw_video"]="embedded"; tests.append((lambda:validate_world(bad,f["world_model_response"]),"raw media in handle request"))
-    bad=copy.deepcopy(f["self_improvement_proposal"]); bad["held_out_gate"]["candidate_score"]=bad["held_out_gate"]["baseline_score"]; tests.append((lambda:validate_improvement(bad,profile),"no strict held-out improvement"))
-    bad=copy.deepcopy(f["self_improvement_proposal"]); bad["model_weights_changed"]=True; tests.append((lambda:validate_improvement(bad,profile),"model weight change"))
-    bad=copy.deepcopy(f["capability_profile"]); bad["axes"][0]["score"]=120; tests.append((lambda:validate_profile(bad),"capability score outside scale"))
-    bad=copy.deepcopy(f["capability_profile"]); a=bad["attestation"]; a["verification_status"]="verified"; a["verified_by"]=a["signer_ref"]; a["verified_at"]="2026-11-12T10:22:00Z"; tests.append((lambda:validate_profile(bad),"self-verified attestation"))
-    bad=copy.deepcopy(f["sovereignty_boundary"]); bad.update({"owner":"c2o","deployment_mode":"private_sovereign","policy_ref":"policy:synthetic"}); bad["egress_default"]="allow"; tests.append((lambda:validate_boundary(bad,"c2o"),"C2O egress default allow"))
-    bad=copy.deepcopy(f["plan_dag"]); bad["nodes"][0]["tool_scope_ref"]=None; tests.append((lambda:validate_plan(bad,"c2o"),"C2O missing tool scope"))
-    bad=copy.deepcopy(f["self_improvement_proposal"]); bad["review"]["permit_ref"]=None; tests.append((lambda:validate_improvement(bad,"c2o"),"C2O missing human permit"))
-    for op,label in tests:
-        try: op()
-        except (ValueError,KeyError,TypeError): continue
-        raise AssertionError("negative test unexpectedly passed: "+label)
-    print("Intelligence capability contract self-test: PASS (7 contract families, 10 negative cases)")
+    fixture = load(root)
+    validate_all(fixture)
+    tests = []
+
+    bad = copy.deepcopy(fixture["plan_dag"])
+    bad["nodes"][0]["depends_on"] = ["execute"]
+    tests.append((lambda: validate_plan(bad), "plan DAG cycle"))
+
+    bad = copy.deepcopy(fixture["compute_budget"])
+    bad["allocations"][0]["amount"] = 9000
+    tests.append((lambda: validate_budget(bad), "compute budget overspend"))
+
+    bad = copy.deepcopy(fixture["world_model_request"])
+    bad["raw_video"] = "embedded"
+    tests.append((lambda: validate_world(bad, fixture["world_model_response"]), "raw media in handle request"))
+
+    bad = copy.deepcopy(fixture["self_improvement_proposal"])
+    bad["held_out_gate"]["candidate_score"] = bad["held_out_gate"]["baseline_score"]
+    tests.append((lambda: validate_improvement(bad), "no strict held-out improvement"))
+
+    bad = copy.deepcopy(fixture["self_improvement_proposal"])
+    bad["model_weights_changed"] = True
+    tests.append((lambda: validate_improvement(bad), "model weight change"))
+
+    bad = copy.deepcopy(fixture["capability_profile"])
+    bad["axes"][0]["score"] = 120
+    tests.append((lambda: validate_profile(bad), "capability score outside scale"))
+
+    bad = copy.deepcopy(fixture["capability_profile"])
+    attestation = bad["attestation"]
+    attestation["verification_status"] = "verified"
+    attestation["verified_by"] = attestation["signer_ref"]
+    attestation["verified_at"] = "2026-11-12T10:22:00Z"
+    tests.append((lambda: validate_profile(bad), "self-verified attestation"))
+
+    bad = copy.deepcopy(fixture["sovereignty_boundary"])
+    bad["egress_default"] = "allow"
+    tests.append((lambda: validate_boundary(bad), "UNIVERSALIS egress default allow"))
+
+    bad = copy.deepcopy(fixture["plan_dag"])
+    bad["nodes"][0]["tool_scope_ref"] = None
+    tests.append((lambda: validate_plan(bad), "Plan DAG missing tool scope"))
+
+    bad = copy.deepcopy(fixture["sovereignty_boundary"])
+    bad["policy_ref"] = "private-policy:synthetic"
+    tests.append((lambda: validate_boundary(bad), "private policy reference in public boundary"))
+
+    for operation, label in tests:
+        try:
+            operation()
+        except (ValueError, KeyError, TypeError):
+            continue
+        raise AssertionError("negative test unexpectedly passed: " + label)
+
+    print("Intelligence capability contract self-test: PASS (7 contract families, 10 UNIVERSALIS negative cases)")
+
 def main():
-    p=argparse.ArgumentParser(description=__doc__); p.add_argument("--profile",choices=("c2o","universalis"),default="universalis"); p.add_argument("--self-test",action="store_true"); p.add_argument("--check",action="store_true"); p.add_argument("--root",type=Path,default=Path(__file__).resolve().parents[2]); a=p.parse_args(); root=a.root.resolve()
-    if a.self_test: self_test(root)
-    if a.check:
-        try: validate_all(load(root),a.profile); print(f"Intelligence capability contracts: PASS (profile={a.profile}, seven families)")
-        except (OSError,UnicodeError,json.JSONDecodeError,ValueError,KeyError,TypeError) as exc: print("Intelligence capability validation: FAIL: "+str(exc)); return 1
-    if not a.self_test and not a.check: p.error("choose --self-test and/or --check")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--self-test", action="store_true")
+    parser.add_argument("--check", action="store_true")
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
+    args = parser.parse_args()
+    root = args.root.resolve()
+
+    if args.self_test:
+        self_test(root)
+    if args.check:
+        try:
+            validate_all(load(root))
+            print("Intelligence capability contracts: PASS (UNIVERSALIS profile, seven families)")
+        except (OSError, UnicodeError, json.JSONDecodeError, ValueError, KeyError, TypeError) as exc:
+            print("Intelligence capability validation: FAIL: " + str(exc))
+            return 1
+    if not args.self_test and not args.check:
+        parser.error("choose --self-test and/or --check")
     return 0
-if __name__=="__main__": sys.exit(main())
+
+
+if __name__ == "__main__":
+    sys.exit(main())
