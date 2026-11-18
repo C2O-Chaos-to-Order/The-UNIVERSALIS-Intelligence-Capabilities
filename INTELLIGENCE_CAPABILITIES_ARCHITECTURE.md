@@ -90,11 +90,11 @@ Next: install a pinned JSON Schema 2020-12 validator; add Janus/AEI/AgenticBench
 |---|---|
 | Owner-supplied UNIVERSALIS candidate inventory | Documented |
 | Eight shared contract families | Implemented in this branch |
-| Synthetic fixtures and ten negative semantic tests | Implemented in this branch; exact-head execution pending |
-| Dedicated CI workflow | Earlier revision passed; corrected public-only revision awaiting current-head run |
+| Synthetic fixtures and ten negative semantic tests | Implemented and passed on the 2026-11-18 public-only revision |
+| Dedicated CI workflow | Passed — run [44379146071](https://github.com/C2O-Chaos-to-Order/The-UNIVERSALIS-Intelligence-Capabilities/actions/runs/44379146071) at commit `2aacabe5961a90515a225d9e361e96d775252453` |
 | Third-party tools installed/integrated | None independently verified |
 | Cryptographic verification and full JSON Schema validation | Pending |
 | Real capability benchmark and self-improvement results | Not performed |
 
 
-**Validation note:** The recorded eight-case CI runs apply only to the earlier validator revision. The current public UNIVERSALIS validator requires explicit tool scope for every Plan DAG node, enforces the local-first/deny-by-default boundary, and rejects private policy references in public fixtures. Its ten negative cases have not yet been re-run in CI on this revision; see INTELLIGENCE_CAPABILITIES_VALIDATION.md.
+**Validation note:** The recorded eight-case CI runs apply only to the earlier validator revision. The corrected public UNIVERSALIS validator requires explicit tool scope for every Plan DAG node, enforces the local-first/deny-by-default boundary, and rejects private policy references in public fixtures. Its ten negative cases and UNIVERSALIS profile check passed in GitHub Actions run [44379146071](https://github.com/C2O-Chaos-to-Order/The-UNIVERSALIS-Intelligence-Capabilities/actions/runs/44379146071) at commit `2aacabe5961a90515a225d9e361e96d775252453`; limitations remain as recorded in INTELLIGENCE_CAPABILITIES_VALIDATION.md.
