@@ -88,7 +88,7 @@ Treat every third-party name in that register as a proposed candidate/reference 
 
 See INTELLIGENCE_CAPABILITIES_ARCHITECTURE.md for the complete owner-supplied tool inventory and the boundary-specific build posture. Shared contract definitions are in schemas/intelligence-capabilities/intelligence-capability-contracts.v1.schema.json; profile-specific synthetic fixtures and semantic checks are in examples/intelligence_capabilities/contracts.v1.json and .github/scripts/intelligence_capability_contract.py. Third-party products remain candidates pending verification.
 
-The initial Intelligence Capabilities contract revision passed CI; the corrected public-only revision is awaiting its own current-head run. The historical run IDs, current negative cases, and outstanding cryptographic, benchmark, and product-integration work are distinguished in INTELLIGENCE_CAPABILITIES_VALIDATION.md.
+The corrected public-only Intelligence Capabilities revision passed GitHub Actions run [44379146071](https://github.com/C2O-Chaos-to-Order/The-UNIVERSALIS-Intelligence-Capabilities/actions/runs/44379146071) at commit `2aacabe5961a90515a225d9e361e96d775252453`. The historical initial run IDs, current negative cases, and outstanding cryptographic, benchmark, and product-integration work are distinguished in INTELLIGENCE_CAPABILITIES_VALIDATION.md.
 
 ## Master toolchain coverage register — 2026-11-12
 
