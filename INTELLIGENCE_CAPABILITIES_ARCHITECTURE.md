@@ -75,6 +75,9 @@ The normative shared schema is schemas/intelligence-capabilities/intelligence-ca
 6. **Compute budget:** unit, total limit, per-step allocations, reconciled remaining amount, and stopping criteria.
 7. **Bounded self-improvement proposal:** target artifact and hashes, bounded edits, propose/probe/compose stage, held-out score comparison, review, and release reference.
 8. **Sovereignty-boundary declaration:** ownership, deployment mode, data/model/traffic residency, egress, and audit requirement.
+
+Synthetic fixtures are in `examples/intelligence_capabilities/contracts.v1.json`. The dependency-free validator is defined in the implementation branch at `.github/scripts/intelligence_capability_contract.py`; the validator is not included in this integration branch while `.github` content remains held under decision C-12b.
+
 ## 4. UNIVERSALIS enforcement posture
 
 - Core contract validation and evidence inspection must remain independently operable; cloud services and proprietary model APIs are optional adapters, not required for the contract layer.
