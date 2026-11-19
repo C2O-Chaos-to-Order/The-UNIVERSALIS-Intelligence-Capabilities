@@ -44,7 +44,7 @@ The contract workflow completed Python runtime setup, seven shared contract-fami
 
 ## Additional hardening in the current branch revision (10 cases)
 
-The current validator source adds two further C2O-specific negative checks: a Plan DAG node without an explicit tool-scope reference is rejected under the C2O profile, and an approved C2O skill/harness change without a human-held permit reference is rejected. The compute-budget validator also now rejects negative allocations/remaining amounts and duplicate step allocations. These changes are present in the current implementation branch, but a new GitHub Actions run for this exact strengthened revision has not yet been surfaced. The passing run IDs above apply to the earlier eight-case revision only.
+The current UNIVERSALIS validator source adds two further public-profile negative checks: a Plan DAG node without an explicit tool-scope reference is rejected, and a public UNIVERSALIS boundary containing a private policy reference is rejected. The compute-budget validator also rejects negative allocations/remaining amounts and duplicate step allocations. These are the two additional cases in the ten-case UNIVERSALIS self-test; they are not the C2O-only human-held-permit check. The C2O implementation has its own separate profile-specific checks. A new GitHub Actions run for this exact strengthened UNIVERSALIS revision has not been surfaced. The passing run IDs above apply to the earlier eight-case revision only.
 
 ## Limits and unresolved work
 
